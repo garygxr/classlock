@@ -1,14 +1,12 @@
-# ClassFinal
+# ClassLock
 
 ## 介绍
-ClassFinal是一款java class文件安全加密工具，支持直接加密jar包或war包，无需修改任何项目代码，兼容spring-framework；可避免源码泄漏或字节码被反编译。
-
-##### Gitee: https://gitee.com/roseboy/classfinal
+ClassLock是一款java class文件安全加密工具，支持直接加密jar包或war包，无需修改任何项目代码，兼容spring-framework；可避免源码泄漏或字节码被反编译。
 
 ## 项目模块说明
-* **classfinal-core:** ClassFinal的核心模块，几乎所有加密的代码都在这里；
-* **classfinal-fatjar:** ClassFinal打包成独立运行的jar包；
-* **classfinal-maven-plugin:** ClassFinal加密的maven插件；
+* **classlock-core:** ClassLock的核心模块，几乎所有加密的代码都在这里；
+* **classlock-fatjar:** ClassLock打包成独立运行的jar包；
+* **classlock-maven-plugin:** ClassLock加密的maven插件；
 
 ## 功能特性
 * 无需修改原项目代码，只要把编译好的jar/war包用本工具加密即可。
@@ -25,15 +23,12 @@ JDK 1.8 +
 
 ## 使用说明
 
-### 下载
-[点此下载](https://repo1.maven.org/maven2/net/roseboy/classfinal-fatjar/1.2.1/classfinal-fatjar-1.2.1.jar)
-
 ### 加密
 
 执行以下命令
 
 ```sh
-java -jar classfinal-fatjar.jar -file yourpaoject.jar -libjars a.jar,b.jar -packages com.yourpackage,com.yourpackage2 -exclude com.yourpackage.Main -pwd 123456 -Y
+java -jar classlock-fatjar.jar -file yourpaoject.jar -libjars a.jar,b.jar -packages com.yourpackage,com.yourpackage2 -exclude com.yourpackage.Main -pwd 123456 -Y
 ```
 
 ```text
@@ -52,17 +47,17 @@ java -jar classfinal-fatjar.jar -file yourpaoject.jar -libjars a.jar,b.jar -pack
 结果: 生成 yourpaoject-encrypted.jar，这个就是加密后的jar文件；加密后的文件不可直接执行，需要配置javaagent。
 
 > 注:
-> 以上示例是直接用参数执行，也可以直接执行 java -jar classfinal-fatjar.jar按照步骤提示输入信息完成加密。
+> 以上示例是直接用参数执行，也可以直接执行 java -jar classlock-fatjar.jar按照步骤提示输入信息完成加密。
 
 ### maven插件方式
 
-在要加密的项目pom.xml中加入以下插件配置,目前最新版本是：1.2.1。
+在要加密的项目pom.xml中加入以下插件配置,目前最新版本是：1.0.0。
 ```xml
 <plugin>
-    <!-- https://gitee.com/roseboy/classfinal -->
-    <groupId>net.roseboy</groupId>
-    <artifactId>classfinal-maven-plugin</artifactId>
-    <version>${classfinal.version}</version>
+    <!-- https://gitee.com/garygan/classlock -->
+    <groupId>com.github.garygan</groupId>
+    <artifactId>classlock-maven-plugin</artifactId>
+    <version>${classlock.version}</version>
     <configuration>
         <password>000000</password><!--加密打包之后pom.xml会被删除，不用担心在jar包里找到此密码-->
         <packages>com.yourpackage,com.yourpackage2</packages>
@@ -74,7 +69,7 @@ java -jar classfinal-fatjar.jar -file yourpaoject.jar -libjars a.jar,b.jar -pack
         <execution>
             <phase>package</phase>
             <goals>
-                <goal>classFinal</goal>
+                <goal>ClassLock</goal>
             </goals>
         </execution>
     </executions>
@@ -95,7 +90,7 @@ maven插件的参数名称与直接运行的参数相同，请参考上节的参
 
 在需要绑定的机器上执行以下命令，生成机器码
 ```sh
-java -jar classfinal-fatjar.jar -C
+java -jar classlock-fatjar.jar -C
 ```
 加密时用-code指定机器码。机器绑定可同时支持机器码+密码的方式加密。
 
@@ -121,7 +116,7 @@ java -javaagent:yourpaoject-encrypted.jar='-pwd 0000000' -jar yourpaoject-encryp
 ```sh
 java -javaagent:yourpaoject-encrypted.jar -jar yourpaoject-encrypted.jar
 ```
-~~使用nohup命令启动时，如果系统支持gui，会弹出输入密码的界面，如果是纯命令行下，不支持gui，则需要在同级目录下的classfinal.txt或yourpaoject-encrypted.classfinal.txt中写入密码，项目读取到密码后会清空此文件。~~
+~~使用nohup命令启动时，如果系统支持gui，会弹出输入密码的界面，如果是纯命令行下，不支持gui，则需要在同级目录下的ClassLock.txt或yourpaoject-encrypted.classlock.txt中写入密码，项目读取到密码后会清空此文件。~~
 
 密码读取顺序已经改为：参数获取密码||环境变量获取密码||密码文件获取密码||控制台输入密码||GUI输入密码||退出
 
@@ -133,11 +128,11 @@ tomcat/bin/catalina 增加以下配置:
 
 ```sh
 //linux下 catalina.sh
-CATALINA_OPTS="$CATALINA_OPTS -javaagent:classfinal-fatjar.jar='-pwd 0000000'";
+CATALINA_OPTS="$CATALINA_OPTS -javaagent:classlock-fatjar.jar='-pwd 0000000'";
 export CATALINA_OPTS;
 
 //win下catalina.bat
-set JAVA_OPTS="-javaagent:classfinal-fatjar.jar='-pwd 000000'"
+set JAVA_OPTS="-javaagent:classlock-fatjar.jar='-pwd 000000'"
 
 //参数说明 
 // -pwd      加密项目的密码  
@@ -158,7 +153,7 @@ set JAVA_OPTS="-javaagent:classfinal-fatjar.jar='-pwd 000000'"
 
 
 ## 版本说明
-* v1.2.1 bug修复
+* v1.0.0 bug修复
 * v1.2.0 packages、libjars、cfgfiles、exclude 参数增加通配符功能
 * v1.1.7 支持加密springboot的配置文件；增加环境变量中读取密码
 * v1.1.6 增加机器绑定功能
