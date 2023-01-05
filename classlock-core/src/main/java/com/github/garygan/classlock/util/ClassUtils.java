@@ -28,6 +28,7 @@ public class ClassUtils {
         try {
             CtClass cc = pool.getCtClass(classname);
             CtMethod[] methods = cc.getDeclaredMethods();
+            CtField[] declaredFields = cc.getDeclaredFields();
 
             for (CtMethod m : methods) {
                 name = m.getName();
@@ -43,9 +44,13 @@ public class ClassUtils {
                         }
 
                     }
-
                 }
             }
+
+            for (CtField declaredField : declaredFields) {
+                declaredField.setName(""+(char)(Math.random()*26+'a')+Math.abs(declaredField.getName().hashCode()));
+            }
+
             return cc.toBytecode();
         } catch (Exception e) {
             throw new RuntimeException("[" + classname + "(" + name + ")]" + e.getMessage());
